@@ -47,6 +47,8 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
                     .create().show();
         } else {
             if(rcontrasena.equals(contrasena)){
+
+
                 Response.Listener<String> respoListener = new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -54,13 +56,12 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
                             JSONObject jsonResponse = new JSONObject(response);
                             boolean success = jsonResponse.getBoolean("success"); //manda respuesta de registro.
 
-
                             if (success) {
                                 Intent intent = new Intent(Registro.this, MenuDInacap.class);
                                 Registro.this.startActivity(intent);
                             } else {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(Registro.this);
-                                builder.setMessage("Error en Ingreso.")
+                                builder.setMessage("El Usuario ya existe")
                                         .setNegativeButton("Reintentar", null)
                                         .create().show();
                             }

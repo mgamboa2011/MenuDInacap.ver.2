@@ -48,41 +48,51 @@ public class MenuDInacap extends AppCompatActivity {
                 final String usuario = etusuario.getText().toString();
                 final String contrasena = etcontrasena.getText().toString();
 
-                Response.Listener<String> responseListener = new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        if (usuario.isEmpty()) {
-                        }
-                        try {
-                            JSONObject jsonResponse = new JSONObject(response);
-                            boolean success = jsonResponse.getBoolean("success");
-                            if (success) {
+                if (usuario.equals("") || contrasena.equals("")) {
 
-                                String usuario = jsonResponse.getString("usuario");
-                                Intent intent = new Intent(MenuDInacap.this, Usuario.class);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MenuDInacap.this);
+                    builder.setMessage("Debe completar todos los campos solicitados.")
+                            .setNegativeButton("Reintentar", null)
+                            .create().show();
 
-                                intent.putExtra("usuario", usuario);
-                                intent.putExtra("contrasena", contrasena);
+                } else {
 
-                                MenuDInacap.this.startActivity(intent);
+                    Response.Listener<String> responseListener = new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+
+                            try {
+                                JSONObject jsonResponse = new JSONObject(response);
+                                boolean success = jsonResponse.getBoolean("success");
+                                if (success) {
+
+                                    String usuario = jsonResponse.getString("usuario");
+                                    Intent intent = new Intent(MenuDInacap.this, Usuario.class);
+
+                                    intent.putExtra("usuario", usuario);
+                                    intent.putExtra("contrasena", contrasena);
+
+                                    MenuDInacap.this.startActivity(intent);
 
 
-                            } else {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(MenuDInacap.this);
-                                builder.setMessage("error Login ")
-                                        .setNegativeButton("Retry", null)
-                                        .create().show();
+                                } else {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(MenuDInacap.this);
+                                    builder.setMessage("Error en Ingreso. Verifique credenciales.")
+                                            .setNegativeButton("Reintentar", null)
+                                            .create().show();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+
                         }
+                    };
 
-                    }
-                };
+                    LoginRequest loginRequest = new LoginRequest(usuario, contrasena, responseListener);
+                    RequestQueue queue = Volley.newRequestQueue(MenuDInacap.this);
+                    queue.add(loginRequest);
 
-                LoginRequest loginRequest = new LoginRequest(usuario, contrasena, responseListener);
-                RequestQueue queue = Volley.newRequestQueue(MenuDInacap.this);
-                queue.add(loginRequest);
+                }
             }
         });
 
