@@ -40,7 +40,8 @@
         android:background="#11000000"
         android:drawableLeft="@drawable/ic_action_pass"
         android:hint="Contraseña"
-        android:inputType="numberPassword|text" />
+        android:inputType="textPassword|numberPassword"
+        android:password="true"/>
 
 
     <TextView

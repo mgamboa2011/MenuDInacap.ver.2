@@ -22,6 +22,7 @@ public class MenuDInacap extends AppCompatActivity {
     TextView tv_registrar;
     EditText etusuario, etcontrasena;
     CardView cv_iniciar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,10 +51,12 @@ public class MenuDInacap extends AppCompatActivity {
                 Response.Listener<String> responseListener = new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        if (usuario.isEmpty()) {
+                        }
                         try {
                             JSONObject jsonResponse = new JSONObject(response);
                             boolean success = jsonResponse.getBoolean("success");
-                            if(success){
+                            if (success) {
 
                                 String usuario = jsonResponse.getString("usuario");
                                 Intent intent = new Intent(MenuDInacap.this, Usuario.class);
@@ -64,7 +67,7 @@ public class MenuDInacap extends AppCompatActivity {
                                 MenuDInacap.this.startActivity(intent);
 
 
-                            }else{
+                            } else {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(MenuDInacap.this);
                                 builder.setMessage("error Login ")
                                         .setNegativeButton("Retry", null)
