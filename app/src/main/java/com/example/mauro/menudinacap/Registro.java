@@ -18,6 +18,7 @@ import org.json.JSONObject;
 public class Registro extends AppCompatActivity implements View.OnClickListener {
     EditText etusuario, etcontrasena, etrcontrasena;
     CardView cv_registrar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,29 +44,46 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
         Response.Listener<String> respoListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                try {
-                    JSONObject jsonResponse = new JSONObject(response);
-                    boolean success = jsonResponse.getBoolean("success"); //manda respuesta de registro.
+                if (usuario.isEmpty() || contrasena.isEmpty() || rcontrasena.isEmpty()) {
 
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Registro.this);
+                    builder.setMessage("Debe rellenar todos los campos solicitados.")
+                            .setNegativeButton("Volver", null)
+                            .create().show();
 
-                    if(success){
-                        Intent intent = new Intent(Registro.this, MenuDInacap.class);
-                        Registro.this.startActivity(intent);
+                } else {
+                    if (rcontrasena.equals(contrasena)) {
+                        try {
+                            JSONObject jsonResponse = new JSONObject(response);
+                            boolean success = jsonResponse.getBoolean("success"); //manda respuesta de registro.
+
+                            if (success) {
+                                Intent intent = new Intent(Registro.this, MenuDInacap.class);
+                                Registro.this.startActivity(intent);
+                            } else {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(Registro.this);
+                                builder.setMessage("Ha ocurrido un problema en el registro de usuario.")
+                                        .setNegativeButton("Reintentar", null)
+                                        .create().show();
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }else{
                         AlertDialog.Builder builder = new AlertDialog.Builder(Registro.this);
-                        builder.setMessage("error registro ")
-                                .setNegativeButton("Retry", null)
+                        builder.setMessage("Las contraseñas deben coincidir.")
+                                .setNegativeButton("Reintentar", null)
                                 .create().show();
                     }
 
-                } catch (JSONException e) {
-                    e.printStackTrace();
                 }
+
             }
         };
 
         RegisterRequest registerRequest = new RegisterRequest(usuario, contrasena, rcontrasena, respoListener);
-            RequestQueue queue = Volley.newRequestQueue(Registro.this);
-            queue.add(registerRequest);
+        RequestQueue queue = Volley.newRequestQueue(Registro.this);
+        queue.add(registerRequest);
     }
 }
